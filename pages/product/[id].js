@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { notFound } from "next/navigation";
 
 export default function ProductDetails({ product }) {
   return (
@@ -28,7 +29,7 @@ export default function ProductDetails({ product }) {
           </h3>
 
           <p className="text-warning">
-            ⭐ {product.rating.rate} ({product.rating.count} Reviews)
+            ⭐ {product?.rating?.rate ?? 0} ({product?.rating?.count ?? 0} Reviews)
           </p>
 
           <hr />
@@ -48,6 +49,12 @@ export async function getServerSideProps(context) {
   const { id } = context.params;
 
   const res = await fetch(`https://fakestoreapi.com/products/${id}`);
+
+  if(!res.ok){
+    return {
+        notFound: true,
+    };
+  }
 
   const product = await res.json();
 
